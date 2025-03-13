@@ -6,8 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-    "server": "node server.js"
+    "lint": "next lint"
   },
   "keywords": [
     "markdown",
@@ -18,29 +17,21 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "@heroicons/react": "^2.2.0",
-    "@types/express": "^4.17.21",
-    "@types/jszip": "^3.4.0",
-    "@types/markdown-it": "^13.0.7",
+    "next": "^14.1.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "puppeteer": "^21.11.0",
+    "markdown-it": "^13.0.2",
+    "tailwindcss": "^3.4.1",
+    "postcss": "^8.4.35",
+    "autoprefixer": "^10.4.17"
+  },
+  "devDependencies": {
     "@types/node": "^20.11.19",
     "@types/react": "^18.2.57",
     "@types/react-dom": "^18.2.19",
-    "autoprefixer": "^10.4.17",
-    "cors": "^2.8.5",
-    "express": "^4.18.2",
-    "jszip": "^3.10.1",
-    "markdown-it": "^14.1.0",
-    "next": "^14.1.0",
-    "postcss": "^8.4.35",
-    "puppeteer": "^22.0.0",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "react-markdown": "^9.0.1",
-    "remark-gfm": "^4.0.0",
-    "tailwindcss": "^3.4.1",
-    "typescript": "^5.3.3"
-  },
-  "devDependencies": {
-    "@tailwindcss/typography": "^0.5.10"
+    "typescript": "^5.3.3",
+    "eslint": "^8.56.0",
+    "eslint-config-next": "^14.1.0"
   }
 }

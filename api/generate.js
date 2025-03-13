@@ -1,11 +1,5 @@
-const express = require('express')
 const puppeteer = require('puppeteer')
 const MarkdownIt = require('markdown-it')
-const path = require('path')
-const cors = require('cors')
-
-const app = express()
-const port = process.env.PORT || 3001
 
 const md = new MarkdownIt({
   html: true,
@@ -13,10 +7,6 @@ const md = new MarkdownIt({
   typographer: true,
   breaks: true,
 })
-
-// Enable CORS for all routes
-app.use(cors())
-app.use(express.json())
 
 // 修改 Puppeteer 启动配置以适配 Vercel 环境
 const getBrowser = async () => {
@@ -32,7 +22,11 @@ const getBrowser = async () => {
   })
 }
 
-app.post('/api/generate', async (req, res) => {
+export default async function handler(req, res) {
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' })
+  }
+
   let browser = null
   try {
     const { markdown } = req.body
@@ -79,32 +73,26 @@ app.post('/api/generate', async (req, res) => {
 
     // 根据内容长度和行数动态调整字体大小
     if (textLength < 50) {
-      // 非常短的文本，使用大字体
       fontSize = 3.2
       lineHeight = 2.0
       paragraphSpacing = 1.5
     } else if (textLength < 100) {
-      // 短文本
       fontSize = 2.8
       lineHeight = 1.9
       paragraphSpacing = 1.4
     } else if (textLength < 200) {
-      // 中等长度文本
       fontSize = 2.2
       lineHeight = 1.8
       paragraphSpacing = 1.3
     } else if (textLength < 300) {
-      // 较长文本
       fontSize = 1.8
       lineHeight = 1.7
       paragraphSpacing = 1.2
     } else if (textLength < 500) {
-      // 长文本
       fontSize = 1.5
       lineHeight = 1.6
       paragraphSpacing = 1.1
     } else {
-      // 非常长的文本
       fontSize = 1.2
       lineHeight = 1.5
       paragraphSpacing = 1.0
@@ -253,180 +241,53 @@ app.post('/api/generate', async (req, res) => {
               font-family: inherit;
               font-size: inherit;
             }
-            /* 终端提示符样式 */
             pre code .prompt {
               color: #0f0;
             }
-            /* 命令样式 */
             pre code .command {
               color: #fff;
             }
-            /* 输出样式 */
             pre code .output {
               color: #d4d4d4;
             }
-            /* 错误输出样式 */
             pre code .error {
               color: #ff6b6b;
             }
-            /* 成功输出样式 */
             pre code .success {
-              color: #4caf50;
+              color: #51cf66;
             }
-            /* 警告输出样式 */
             pre code .warning {
-              color: #ffd700;
+              color: #ffd43b;
             }
-            /* 注释样式 */
             pre code .comment {
-              color: #888;
+              color: #868e96;
             }
-            /* 路径样式 */
             pre code .path {
-              color: #64b5f6;
+              color: #339af0;
             }
-            /* 数字样式 */
             pre code .number {
-              color: #b5cea8;
+              color: #ff9f43;
             }
-            /* 字符串样式 */
             pre code .string {
-              color: #ce9178;
+              color: #ffd43b;
             }
-            /* 关键字样式 */
             pre code .keyword {
-              color: #569cd6;
+              color: #ff6b6b;
             }
-            /* 函数样式 */
             pre code .function {
-              color: #dcdcaa;
+              color: #339af0;
             }
-            /* 变量样式 */
             pre code .variable {
-              color: #9cdcfe;
+              color: #ffd43b;
             }
-            /* 操作符样式 */
             pre code .operator {
               color: #d4d4d4;
             }
-            /* 括号样式 */
             pre code .bracket {
               color: #d4d4d4;
             }
-            /* 特殊字符样式 */
             pre code .special {
-              color: #d4d4d4;
-            }
-            blockquote {
-              margin: 1.2em 0;
-              padding: 1em 1.5em;
-              border-left: 4px solid #FF2442;
-              background: #fff5f7;
-              color: #666;
-              border-radius: 0 12px 12px 0;
-              position: relative;
-            }
-            blockquote::before {
-              content: '"';
-              position: absolute;
-              top: -0.5em;
-              left: -0.5em;
-              font-size: 3em;
-              color: #FF2442;
-              opacity: 0.2;
-            }
-            ul, ol {
-              margin: 1em 0;
-              padding-left: 1.5em;
-            }
-            li {
-              margin: 0.6em 0;
-            }
-            a {
-              color: #FF2442;
-              text-decoration: none;
-              border-bottom: 1px solid transparent;
-              transition: border-color 0.2s;
-              font-weight: 500;
-            }
-            a:hover {
-              border-bottom-color: #FF2442;
-            }
-            hr {
-              border: none;
-              border-top: 1px solid #eee;
-              margin: 2em 0;
-            }
-            .emoji {
-              font-size: 1.4em;
-              margin: 0 0.1em;
-              vertical-align: middle;
-            }
-            .highlight {
-              background: #fff5f7;
-              padding: 0.2em 0.4em;
-              border-radius: 4px;
-              color: #FF2442;
-              font-weight: 500;
-            }
-            .tag {
-              display: inline-block;
-              background: #f8f9fa;
-              padding: 0.2em 0.8em;
-              border-radius: 16px;
-              font-size: 0.95em;
-              color: #666;
-              margin: 0.2em;
-            }
-            .dialog {
-              background: #fff5f7;
-              padding: 1.2em;
-              border-radius: 12px;
-              margin: 1.2em 0;
-              position: relative;
-            }
-            .dialog::before {
-              content: '';
-              position: absolute;
-              top: -8px;
-              left: 20px;
-              width: 16px;
-              height: 16px;
-              background: #fff5f7;
-              transform: rotate(45deg);
-            }
-            .dialog-title {
-              font-weight: 700;
-              color: #FF2442;
-              margin-bottom: 0.6em;
-            }
-            .dialog-content {
-              color: #666;
-              line-height: 1.8;
-            }
-            table {
-              width: 100%;
-              border-collapse: collapse;
-              margin: 1.2em 0;
-            }
-            th, td {
-              padding: 0.6em;
-              border: 1px solid #eee;
-              text-align: left;
-            }
-            th {
-              background: #f8f9fa;
-              font-weight: 600;
-            }
-            tr:nth-child(even) {
-              background: #f8f9fa;
-            }
-            .task-list-item {
-              list-style-type: none;
-              padding-left: 1.5em;
-            }
-            .task-list-item-checkbox {
-              margin-right: 0.5em;
+              color: #ff6b6b;
             }
           </style>
         </head>
@@ -438,7 +299,7 @@ app.post('/api/generate', async (req, res) => {
       </html>
     `)
 
-    // 修改图片生成部分
+    // 生成图片
     const buffer = await page.screenshot({
       type: 'png',
       fullPage: true,
@@ -459,12 +320,4 @@ app.post('/api/generate', async (req, res) => {
       await browser.close()
     }
   }
-})
-
-// 添加健康检查端点
-app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok' })
-})
-
-// 导出 app 实例供 Vercel 使用
-module.exports = app 
+} 
