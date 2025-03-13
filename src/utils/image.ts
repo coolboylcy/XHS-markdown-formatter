@@ -1,8 +1,8 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'
+const API_URL = process.env.NEXT_PUBLIC_API_URL || ''
 
 export async function generateImage(markdown: string): Promise<string> {
   try {
-    const response = await fetch('http://localhost:3001/api/generate', {
+    const response = await fetch(`${API_URL}/api/generate`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -15,8 +15,8 @@ export async function generateImage(markdown: string): Promise<string> {
       throw new Error(errorData.error || 'Failed to generate image')
     }
 
-    const data = await response.json()
-    return data.image
+    const blob = await response.blob()
+    return URL.createObjectURL(blob)
   } catch (error) {
     console.error('Error generating image:', error)
     throw error
